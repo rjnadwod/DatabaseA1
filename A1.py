@@ -58,8 +58,11 @@ def main():
 
 class pyDatabase:
 
+    # Class variables for functions to utilize
     f = None
     f2 = None
+    numRecords = 0
+    recordSize = 0
 
     # Print menu to the user
     def printMenu(self):
@@ -82,78 +85,131 @@ class pyDatabase:
         fileName = input("Name of your file (including .csv): ")
         print("File selected: " + fileName)
 
-        # Create new .config file to store info about the database
-        self.f = open("Parks.config", "w")
+        # Check for the file; if it is not found, exit the program
+        if not os.path.isfile(fileName):
+            print(fileName, "not found. Exiting now.")
+            exit()
 
-        # Create new .data file to store data in
-        self.f2 = open("Parks.data", "w")
+        else:
+            # If file is found, let user know and create database 
+            print(fileName, "found. Creating database.")
 
-        # Create list to hold the field names in
-        fields = []
+            # Create new .config file to store info about the database
+            self.f = open("Parks.config", "w")
 
-        # Blank record with no delimiters
-        # Delimiter used will be '!'
-        blank = ['', '', '', '', '', '', '']
-        
-        # Reading csv file 
-        with open(fileName, 'r') as csvfile: 
-            # Creating a csv reader object 
-            csvreader = csv.reader(csvfile) 
+            # Create new .data file to store data in
+            self.f2 = open("Parks.data", "w")
+
+            # Create list to hold the field names in
+            fields = []
+
+            # Blank record with no delimiters
+            # Delimiter used will be '!'
+            blank = ""
             
-            # Extracting field names through first row 
-            self.f.write("Fields: ")
-            fields = next(csvreader)
-            for field in range(len(fields)):
-                self.f.write(fields[field] + ", ")
-        
-            # Extracting each data row one by one, adding delimters where necessary
-            for record in csvreader: 
-                # Add delimiters to the name
-                if len(record[4]) < 90:
-                    record[4] = record[4].ljust(90, '!')
-                # Add delimiters to the type
-                if len(record[5]) < 40:
-                    record[5] = record[5].ljust(40, '!')
-                # Add delimiters to the visitors
-                if len(record[6]) < 9:
-                    record[6] = record[6].ljust(9, '!')
+            # Reading csv file 
+            with open(fileName, 'r') as csvfile: 
+                # Creating a csv reader object 
+                csvreader = csv.reader(csvfile) 
+                
+                # Extracting field names through first row 
+                self.f.write("Fields: ")
+                fields = next(csvreader)
+                for field in range(len(fields)):
+                    self.f.write(fields[field] + ", ")
+            
+                # Extracting each data row one by one, adding delimters where necessary
+                for record in csvreader: 
+                    # Add delimiters to the name
+                    if len(record[4]) < 90:
+                        record[4] = record[4].ljust(90, '!')
+                    # Add delimiters to the type
+                    if len(record[5]) < 40:
+                        record[5] = record[5].ljust(40, '!')
+                    # Add delimiters to the visitors
+                    if len(record[6]) < 9:
+                        record[6] = record[6].ljust(9, '!')
 
-                # Write a single record to Parks.data
-                self.f2.write(str(record) + "\n")
+                    # Write a single record to Parks.data
+                    self.f2.write(str(record) + "\n")
 
-                # Write a blank record to Parks.data between each record
-                self.f2.write(str(blank) + "\n")
-        
-            # Get total number of records and write to .config
-            print("Total no. of records: %d"%(csvreader.line_num))
-            print("")
-            self.f.write("\n")
-            self.f.write("Total no. of records: %d"%(csvreader.line_num * 2)) 
+                    # Write a blank record to Parks.data between each record
+                    self.f2.write(str(blank) + "\n")
+            
+                # Get total number of records and write to .config
+                print("Total number of records: %d"%(csvreader.line_num))
+                print("")
+                self.f.write("\n")
+                self.f.write("Total no. of records: %d"%(csvreader.line_num * 2))
+                self.numRecords = csvreader.line_num * 2 - 1
+                self.recordSize = 181
 
 
 
     def openDB(self):
+
+        # If there are no databases currently open, ask user for database to open
         if (self.f.closed == True and self.f2.closed == True):
             dbName = input("Name of database to open: ")
+
+            # If the database is not found, exit
+            if not os.path.isfile(dbName + ".data"):
+                print(dbName, "database not found. Exiting now.")
+                exit()
+
+            else:
+                # If file is found, let user know and open database 
+                print(dbName, "database found. Opening database.")
+                self.f = open("Parks.config", "r")
+                self.f2 = open("Parks.data", "r")
+                print(str(self.f.name) + " and " + str(self.f2.name) + " have been opened.\n")
+
+        # If there is a database currently open, prompt user to close them and try again
         else:
-            print("Please close the currently open database files.")
+            print("There are database files currently open. Please close them and try again.")
             print("Returning to main menu.\n")
 
 
 
     def closeDB(self):
+
+        # If there is a database currently open, close the database
         if (self.f.closed != True and self.f2.closed != True):
             print(str(self.f.name) + " and " + str(self.f2.name) + " are currently open. Closing files now. Please wait.")
             self.f.close()
             self.f2.close()
             print("Files have been closed. Returning to main menu.\n")
+
+        # If there is no database currently open, let the user know
         else:
             print("All database files are currently closed.\n")
 
 
-
+    # NEED HELP ON THIS FUNCTION - I may have to rewrite the "createDB" function to do this correctly...
     def displayRecord(self):
-        pass
+        # Variable to store a record into from the .data file
+        storedRecord = []
+        
+        # Check to make sure the file is readable before searching
+        if (self.f.readable() != True and self.f2.readable() != True):
+            self.f = open(str(self.f.name), "r")
+            self.f2 = open(str(self.f2.name), "r")
+            print(self.f.name)
+            print(self.f2.name)
+
+        if (self.f.closed == True and self.f2.closed == True):
+            print("No database files open. Please open files before searching for a record.\n")
+        else:
+            # Get record ID from user to search with
+            recordID = input("Enter record ID to search: ")
+
+            # Cast recordID with int() to make sure it is >= 0
+            if int(recordID) >= 0:
+                print("Searching for " + str(recordID))
+                self.f2.seek(0, 0)
+                self.f2.seek(self.recordSize * int(recordID))
+                storedRecord = self.f2.readline()
+                print(storedRecord)
 
 
 
@@ -181,7 +237,36 @@ class pyDatabase:
         print("Goodbye! :)")
         exit()
 
-    
+
+
+    # # Binary Search by record id
+    # def binarySearch(self, f, name):
+    #     global middle
+    #     global num_records,record_size
+    #     low=0
+    #     high=num_records-1
+    #     Found = False
+    #     Success = False
+
+    #     while not Found and high >= low:
+    #         middle = (low+high) // 2
+    #         #middle = low + (high-low) // 2
+    #         record, Success = getRecord(f, middle)
+    #         middleid = record.split()
+    #         middleidnum = middleid[0]
+    #         if middleidnum == name:
+    #             Found = True
+    #         if middleidnum < name:
+    #             low = middle+1
+    #         if middleidnum > name: 
+    #             high = middle-1
+        
+    #     if(Found == True):
+    #         return record, middle # the record number of the record
+    #     else:
+    #         return -1, middle
+
+
 
 if __name__ == "__main__":
     main()
