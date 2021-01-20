@@ -56,7 +56,7 @@ def printMenu():
 def createDB():
     #Prompt user for the name of a .csv file. Return name to user
     fileName = input("Name of your file (including .csv): ")
-    print(fileName)
+    print("File selected: " + fileName)
 
     # initializing the titles and rows list 
     fields = [] 
