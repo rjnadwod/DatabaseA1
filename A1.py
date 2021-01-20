@@ -95,26 +95,26 @@ def createDB():
         csvreader = csv.reader(csvfile) 
         
         # Extracting field names through first row 
-        f.write("Fields:")
+        f.write("Fields: ")
         fields = next(csvreader)
         for field in range(len(fields)):
-            f.write(" " + fields[field])
+            f.write(fields[field] + ", ")
     
         # Extracting each data row one by one, adding delimters where necessary
-        for row in csvreader: 
-            if len(row[4]) < 90:
-                row[4] = row[4].ljust(90, '!')
-            if len(row[5]) < 40:
-                row[5] = row[5].ljust(40, '!')
-            if len(row[6]) < 9:
-                row[6] = row[6].ljust(9, '!')
-            f2.write(str(row) + "\n")
+        for record in csvreader: 
+            if len(record[4]) < 90:
+                record[4] = record[4].ljust(90, '!')
+            if len(record[5]) < 40:
+                record[5] = record[5].ljust(40, '!')
+            if len(record[6]) < 9:
+                record[6] = record[6].ljust(9, '!')
+            f2.write(str(record) + "\n")
             f2.write(str(blank) + "\n")
     
-        # Get total number of rows and write to .config
-        print("Total no. of rows: %d"%(csvreader.line_num))
+        # Get total number of records and write to .config
+        print("Total no. of records: %d"%(csvreader.line_num))
         f.write("\n")
-        f.write("Total no. of rows: %d"%(csvreader.line_num * 2)) 
+        f.write("Total no. of records: %d"%(csvreader.line_num * 2)) 
 
 
 
