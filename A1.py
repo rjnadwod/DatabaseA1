@@ -87,12 +87,13 @@ class pyDatabase:
 
         # Create new .data file to store data in
         self.f2 = open("Parks.data", "w")
+
+        # Create list to hold the field names in
         fields = []
 
         # Blank record with no delimiters
-        blank = ['', '', '', '', '', '', '']
-
         # Delimiter used will be '!'
+        blank = ['', '', '', '', '', '', '']
         
         # Reading csv file 
         with open(fileName, 'r') as csvfile: 
@@ -107,13 +108,20 @@ class pyDatabase:
         
             # Extracting each data row one by one, adding delimters where necessary
             for record in csvreader: 
+                # Add delimiters to the name
                 if len(record[4]) < 90:
                     record[4] = record[4].ljust(90, '!')
+                # Add delimiters to the type
                 if len(record[5]) < 40:
                     record[5] = record[5].ljust(40, '!')
+                # Add delimiters to the visitors
                 if len(record[6]) < 9:
                     record[6] = record[6].ljust(9, '!')
+
+                # Write a single record to Parks.data
                 self.f2.write(str(record) + "\n")
+
+                # Write a blank record to Parks.data between each record
                 self.f2.write(str(blank) + "\n")
         
             # Get total number of records and write to .config
