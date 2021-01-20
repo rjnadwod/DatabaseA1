@@ -94,7 +94,9 @@ def createDB():
     
         # extracting each data row one by one 
         for row in csvreader: 
-            rows.append(row) 
+            f2.write("\n")
+            f2.write(str(row))
+            f2.write("\n")
     
         # get total number of rows and write to .config
         print("Total no. of rows: %d"%(csvreader.line_num))
