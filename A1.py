@@ -83,7 +83,9 @@ def createDB():
     # Create new .data file to store data in
     f2 = open("Parks.data", "w")
     fields = []
-    blank = ['', '', '', '', '', '', '']
+
+    # Blank record with delimiters - We may need to remove these delimiters?
+    blank = ['!!!!!!!', '!!', '!!', '!!', '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', '!!!!!!!!!']
 
     # Delimiter used will be '!'
     
