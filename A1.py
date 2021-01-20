@@ -54,6 +54,8 @@ def main():
             print("""Invalid option selection. Please try again. 
             """)
 
+
+
 # Print menu to the user
 def printMenu():
     print("""Please select a menu option from the following: 
@@ -67,6 +69,8 @@ def printMenu():
     8. Delete record
     9. Quit""")
 
+
+
 # User can create a new database
 def createDB():
     # Prompt user for the name of a .csv file. Return name to user
@@ -79,54 +83,79 @@ def createDB():
     # Create new .data file to store data in
     f2 = open("Parks.data", "w")
     fields = []
-    rows = []
+    blank = ['', '', '', '', '', '', '']
+
+    # Delimiter used will be '!'
     
-    # reading csv file 
+    # Reading csv file 
     with open(fileName, 'r') as csvfile: 
-        # creating a csv reader object 
+        # Creating a csv reader object 
         csvreader = csv.reader(csvfile) 
         
-        # extracting field names through first row 
+        # Extracting field names through first row 
         f.write("Fields:")
         fields = next(csvreader)
         for field in range(len(fields)):
             f.write(" " + fields[field])
     
-        # extracting each data row one by one 
+        # Extracting each data row one by one, adding delimters where necessary
         for row in csvreader: 
-            f2.write("\n")
-            f2.write(str(row))
-            f2.write("\n")
+            if len(row[4]) < 90:
+                row[4] = row[4].ljust(90, '!')
+            if len(row[5]) < 40:
+                row[5] = row[5].ljust(40, '!')
+            if len(row[6]) < 9:
+                row[6] = row[6].ljust(9, '!')
+            f2.write(str(row) + "\n")
+            f2.write(str(blank) + "\n")
     
-        # get total number of rows and write to .config
+        # Get total number of rows and write to .config
         print("Total no. of rows: %d"%(csvreader.line_num))
         f.write("\n")
-        f.write("Total no. of rows: %d"%(csvreader.line_num)) 
+        f.write("Total no. of rows: %d"%(csvreader.line_num * 2)) 
+
+
 
 def openDB():
     pass
 
+
+
 def closeDB():
     pass
+
+
 
 def displayRecord():
     pass
 
+
+
 def updateRecord():
     pass
+
+
 
 def createReport():
     pass
 
+
+
 def addRecord():
     pass
+
+
 
 def deleteRecord():
     pass
 
+
+
 def quit():
     print("Goodbye! :)")
     exit()
+
+    
 
 if __name__ == "__main__":
     main()
