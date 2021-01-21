@@ -127,14 +127,17 @@ class pyDatabase:
                     if len(record[5]) < 40:
                         record[5] = record[5].ljust(40, '!')
                     # Add delimiters to the visitors
-                    if len(record[6]) < 9:
-                        record[6] = record[6].ljust(9, '!')
+                    if len(record[6]) < 10:
+                        record[6] = record[6].ljust(10, '!')
+
+                    # Join the list together into a string
+                    str1 = ' '.join(record)
 
                     # Write a single record to Parks.data
-                    self.f2.write(str(record) + "\n")
+                    self.f2.write(str1 + "\n")
 
                     # Write a blank record to Parks.data between each record
-                    self.f2.write(str(blank) + "\n")
+                    self.f2.write(blank + "\n")
             
                 # Get total number of records and write to .config
                 print("Total number of records: %d"%(csvreader.line_num))
@@ -185,17 +188,16 @@ class pyDatabase:
             print("All database files are currently closed.\n")
 
 
-    # NEED HELP ON THIS FUNCTION - I may have to rewrite the "createDB" function to do this correctly...
+    # NEED HELP ON THIS FUNCTION
     def displayRecord(self):
+        pass
         # Variable to store a record into from the .data file
-        storedRecord = []
+        storedRecord = ""
         
         # Check to make sure the file is readable before searching
         if (self.f.readable() != True and self.f2.readable() != True):
             self.f = open(str(self.f.name), "r")
             self.f2 = open(str(self.f2.name), "r")
-            print(self.f.name)
-            print(self.f2.name)
 
         if (self.f.closed == True and self.f2.closed == True):
             print("No database files open. Please open files before searching for a record.\n")
@@ -207,9 +209,9 @@ class pyDatabase:
             if int(recordID) >= 0:
                 print("Searching for " + str(recordID))
                 self.f2.seek(0, 0)
-                self.f2.seek(self.recordSize * int(recordID))
+                self.f2.seek(self.recordSize * int(recordID)) # Offset from the beginning of the file
                 storedRecord = self.f2.readline()
-                print(storedRecord)
+                print(len(storedRecord))
 
 
 
@@ -219,7 +221,23 @@ class pyDatabase:
 
 
     def createReport(self):
-        pass
+
+        # Check to make sure the file is readable before searching
+        if (self.f.readable() != True and self.f2.readable() != True):
+            self.f = open(str(self.f.name), "r")
+            self.f2 = open(str(self.f2.name), "r")
+
+        i = 0
+        fields = self.f.readline()
+        fields = fields.replace(",",'')
+        print(fields[8:])
+        while i < 10:
+            recordStr = self.f2.readline()
+            if (recordStr != '\n'):
+                print(recordStr)
+                i += 1
+            else:
+                i += 0
 
 
 
