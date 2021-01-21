@@ -105,7 +105,7 @@ class pyDatabase:
 
             # Blank record with no delimiters
             # Delimiter used will be '!'
-            blank = ""
+            blank = "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
             
             # Reading csv file 
             with open(fileName, 'r') as csvfile: 
@@ -120,6 +120,9 @@ class pyDatabase:
             
                 # Extracting each data row one by one, adding delimters where necessary
                 for record in csvreader: 
+                    # Add delimiters to the ID
+                    if len(record[0]) < 7:
+                        record[0] = record[0].ljust(7, '!')
                     # Add delimiters to the name
                     if len(record[4]) < 90:
                         record[4] = record[4].ljust(90, '!')
@@ -145,7 +148,7 @@ class pyDatabase:
                 self.f.write("\n")
                 self.f.write("Total no. of records: %d"%(csvreader.line_num * 2))
                 self.numRecords = csvreader.line_num * 2 - 1
-                self.recordSize = 181
+                self.recordSize = 161
 
 
 
@@ -211,7 +214,7 @@ class pyDatabase:
                 self.f2.seek(0, 0)
                 self.f2.seek(self.recordSize * int(recordID)) # Offset from the beginning of the file
                 storedRecord = self.f2.readline()
-                print(len(storedRecord))
+                print(storedRecord)
 
 
 
