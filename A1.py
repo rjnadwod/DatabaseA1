@@ -15,6 +15,9 @@ import os.path
 import csv
 
 def main():
+    # Makes sure the script is run with Python3
+    assert sys.version_info >= (3,), "Python version too low. Run with python3"
+
     # While loop for menu; until the user selects "Exit", loop through the menu.
     # Users can select any number from 1-8 and be brought back to the menu. 
     # Picking 9 will break the loop and exit the program. 
