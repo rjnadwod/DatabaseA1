@@ -194,7 +194,7 @@ class pyDatabase:
         # Variable to store a record into from the .data file
         storedRecord = ""
         
-        # Check to make sure the file is readable before searching
+        # Check to make sure the file is readable before searching for record
         if (self.f.readable() != True and self.f2.readable() != True):
             self.f = open(str(self.f.name), "r")
             self.f2 = open(str(self.f2.name), "r")
@@ -222,22 +222,33 @@ class pyDatabase:
 
     def createReport(self):
 
-        # Check to make sure the file is readable before searching
+        success = False
+
+        # Check to make sure the file is readable before creating report
+        print("Making sure files are readable.")
         if (self.f.readable() != True and self.f2.readable() != True):
             self.f = open(str(self.f.name), "r")
             self.f2 = open(str(self.f2.name), "r")
 
+        # Create and open file to write the first 10 records to as a "report"
+        print("Creating report.txt.")
+        report = open("report.txt", "w")
+
         i = 0
         fields = self.f.readline()
-        fields = fields.replace(",",'')
-        print(fields[8:])
+        fields = fields.replace(", ",'  ')
+        report.write(fields)
         while i < 10:
             recordStr = self.f2.readline()
             if (recordStr != '\n'):
-                print(recordStr)
+                report.write(recordStr)
                 i += 1
+                success = True
             else:
                 i += 0
+
+        if success == True:
+            print("Report successfully generated. Returning to main menu.\n")
 
 
 
