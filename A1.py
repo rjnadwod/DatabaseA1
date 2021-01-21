@@ -198,11 +198,6 @@ class pyDatabase:
         pass
         # Variable to store a record into from the .data file
         storedRecord = ""
-        
-        # Check to make sure the file is readable before searching for record
-        if (self.f.readable() != True and self.f2.readable() != True):
-            self.f = open(str(self.f.name), "r")
-            self.f2 = open(str(self.f2.name), "r")
 
         if (self.f.closed == True and self.f2.closed == True):
             print("No database files open. Please open files before searching for a record.\n")
@@ -211,12 +206,8 @@ class pyDatabase:
             recordID = input("Enter record ID to search: ")
 
             # Cast recordID with int() to make sure it is >= 0
-            if int(recordID) >= 0:
-                print("Searching for " + str(recordID))
-                self.f2.seek(0, 0)
-                self.f2.seek(self.recordSize * int(recordID)) # Offset from the beginning of the file
-                storedRecord = self.f2.readline()
-                print(storedRecord)
+            storedRecord = self.find(int(recordID))
+            print(storedRecord)
 
 
 
@@ -270,6 +261,18 @@ class pyDatabase:
     def quit(self):
         print("Goodbye! :)")
         exit()
+
+
+
+    # Function to use seeks to find the record
+    def find(self, ID):
+        recordID = ID
+        if int(recordID) >= 0:
+                print("Searching for " + str(recordID))
+                self.f2.seek(0, 0)
+                self.f2.seek(self.recordSize * int(recordID)) # Offset from the beginning of the file
+                storedRecord = self.f2.readline()
+                return storedRecord
 
 
 
