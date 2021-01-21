@@ -65,7 +65,7 @@ class pyDatabase:
     f = None
     f2 = None
     numRecords = 0
-    recordSize = 0
+    recordSize = 162
 
     # Print menu to the user
     def printMenu(self):
@@ -108,7 +108,7 @@ class pyDatabase:
 
             # Blank record with no delimiters
             # Delimiter used will be '!'
-            blank = "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+            blank = "!!!!!!! !! !! !!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!"
             
             # Reading csv file 
             with open(fileName, 'r') as csvfile: 
@@ -143,7 +143,7 @@ class pyDatabase:
                     self.f2.write(str1 + "\n")
 
                     # Write a blank record to Parks.data between each record
-                    self.f2.write(blank + "\n")
+                    #self.f2.write(blank + "\n")
             
                 # Get total number of records and write to .config
                 print("Total number of records: %d"%(csvreader.line_num))
@@ -151,7 +151,6 @@ class pyDatabase:
                 self.f.write("\n")
                 self.f.write("Total no. of records: %d"%(csvreader.line_num * 2))
                 self.numRecords = csvreader.line_num * 2 - 1
-                self.recordSize = 161
 
 
 
@@ -194,7 +193,7 @@ class pyDatabase:
             print("All database files are currently closed.\n")
 
 
-    # NEED HELP ON THIS FUNCTION
+
     def displayRecord(self):
         pass
         # Variable to store a record into from the .data file
