@@ -276,7 +276,7 @@ class pyDatabase:
 
 
 
-    # # Binary Search by record id
+    # # Binary Search by recordID
     # def binarySearch(self, f, name):
     #     global middle
     #     global num_records,record_size
