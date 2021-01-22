@@ -216,13 +216,16 @@ class pyDatabase:
             # Cast recordID with int() to make sure it is >= 0 and less than numRecords
         if int(recordID) >= 0 and int(recordID) <= self.numRecords:
             storedRecord = self.find(int(recordID))
-            print(self.recordFields[0:2] + ': ' + storedRecord[:7])
-            print(self.recordFields[2:8] + ': ' + storedRecord[8:10])
-            print(self.recordFields[8:13] + ': ' + storedRecord[11:13])
-            print(self.recordFields[13:17] + ': ' + storedRecord[14:18])
-            print(self.recordFields[17:21] + ': ' + storedRecord[19:109])
-            print(self.recordFields[21:25] + ': ' + storedRecord[110:150])
-            print(self.recordFields[25:33] + ': ' + storedRecord[151:160])
+
+            # Print record with field names; remove delimiters from the record.
+            # A blank record will print with blanks in every field
+            print(self.recordFields[0:2] + ': ' + storedRecord[:7].strip('!'))
+            print(self.recordFields[2:8] + ': ' + storedRecord[8:10].strip('!'))
+            print(self.recordFields[8:13] + ': ' + storedRecord[11:13].strip('!'))
+            print(self.recordFields[13:17] + ': ' + storedRecord[14:18].strip('!'))
+            print(self.recordFields[17:21] + ': ' + storedRecord[19:109].strip('!'))
+            print(self.recordFields[21:25] + ': ' + storedRecord[110:150].strip('!'))
+            print(self.recordFields[25:33] + ': ' + storedRecord[151:160].strip('!'))
         else:
             print(recordID + " is out of bounds.")
 
