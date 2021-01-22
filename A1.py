@@ -232,7 +232,56 @@ class pyDatabase:
 
 
     def updateRecord(self):
-        pass
+        # Check to make sure the file is readable before creating report
+        print("Making sure files are readable.")
+        if (self.f.readable() != True and self.f2.readable() != True):
+            self.f = open(str(self.f.name), "w+")
+            self.f2 = open(str(self.f2.name), "w+")
+
+        # Variable to store a record into from the .data file
+        storedRecord = ""
+
+        if (self.f.closed == True and self.f2.closed == True):
+            print("No database files open. Please open files before searching for a record.\n")
+        else:
+            # Get record ID from user to search with
+            recordID = input("Enter record ID to update: ")
+            print("")
+
+            # Cast recordID with int() to make sure it is >= 0 and less than numRecords
+        if int(recordID) >= 0 and int(recordID) <= self.numRecords:
+            storedRecord = self.find(int(recordID))
+
+            # Print record with field names; remove delimiters from the record.
+            # A blank record will print with blanks in every field
+            print(self.recordFields[0:2] + ': ' + storedRecord[:7].strip(' '))
+            print(self.recordFields[2:8] + ': ' + storedRecord[8:10].strip(' '))
+            print(self.recordFields[8:13] + ': ' + storedRecord[11:13].strip(' '))
+            print(self.recordFields[13:17] + ': ' + storedRecord[14:18].strip(' '))
+            print(self.recordFields[17:21] + ': ' + storedRecord[19:109].strip(' '))
+            print(self.recordFields[21:25] + ': ' + storedRecord[110:150].strip(' '))
+            print(self.recordFields[25:33] + ': ' + storedRecord[151:160].strip(' '))
+            print("")
+
+            fieldToUpdate = input("Select field to update: ")
+
+            if fieldToUpdate == "ID":
+                print("Field 'ID' cannot be changed. Returning to main menu.")
+            elif fieldToUpdate == "Region":
+                print("Updating Region")
+            elif fieldToUpdate == "State":
+                print("Updating State")
+            elif fieldToUpdate == "Code":
+                print("Updating Code")
+            elif fieldToUpdate == "Name":
+                print("Updating Name")
+            elif fieldToUpdate == "Type":
+                print("Updating Type")
+            elif fieldToUpdate == "Visitors":
+                print("Updating Visitors")
+            
+        else:
+            print(recordID + " is out of bounds.")
 
 
 
