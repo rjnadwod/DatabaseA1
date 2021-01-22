@@ -108,8 +108,8 @@ class pyDatabase:
             fields = []
 
             # Blank record with no delimiters
-            # Delimiter used will be '!'
-            blank = "!!!!!!! !! !! !!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!"
+            # Delimiter used will be ' '
+            blank = "                                                                                                                                                                 "
             
             # Reading csv file 
             with open(fileName, 'r') as csvfile: 
@@ -127,16 +127,16 @@ class pyDatabase:
                 for record in csvreader: 
                     # Add delimiters to the ID
                     if len(record[0]) < 7:
-                        record[0] = record[0].ljust(7, '!')
+                        record[0] = record[0].ljust(7, ' ')
                     # Add delimiters to the name
                     if len(record[4]) < 90:
-                        record[4] = record[4].ljust(90, '!')
+                        record[4] = record[4].ljust(90, ' ')
                     # Add delimiters to the type
                     if len(record[5]) < 40:
-                        record[5] = record[5].ljust(40, '!')
+                        record[5] = record[5].ljust(40, ' ')
                     # Add delimiters to the visitors
                     if len(record[6]) < 10:
-                        record[6] = record[6].ljust(10, '!')
+                        record[6] = record[6].ljust(10, ' ')
 
                     # Join the list together into a string
                     str1 = ' '.join(record)
@@ -219,13 +219,13 @@ class pyDatabase:
 
             # Print record with field names; remove delimiters from the record.
             # A blank record will print with blanks in every field
-            print(self.recordFields[0:2] + ': ' + storedRecord[:7].strip('!'))
-            print(self.recordFields[2:8] + ': ' + storedRecord[8:10].strip('!'))
-            print(self.recordFields[8:13] + ': ' + storedRecord[11:13].strip('!'))
-            print(self.recordFields[13:17] + ': ' + storedRecord[14:18].strip('!'))
-            print(self.recordFields[17:21] + ': ' + storedRecord[19:109].strip('!'))
-            print(self.recordFields[21:25] + ': ' + storedRecord[110:150].strip('!'))
-            print(self.recordFields[25:33] + ': ' + storedRecord[151:160].strip('!'))
+            print(self.recordFields[0:2] + ': ' + storedRecord[:7].strip(' '))
+            print(self.recordFields[2:8] + ': ' + storedRecord[8:10].strip(' '))
+            print(self.recordFields[8:13] + ': ' + storedRecord[11:13].strip(' '))
+            print(self.recordFields[13:17] + ': ' + storedRecord[14:18].strip(' '))
+            print(self.recordFields[17:21] + ': ' + storedRecord[19:109].strip(' '))
+            print(self.recordFields[21:25] + ': ' + storedRecord[110:150].strip(' '))
+            print(self.recordFields[25:33] + ': ' + storedRecord[151:160].strip(' '))
         else:
             print(recordID + " is out of bounds.")
 
@@ -256,7 +256,7 @@ class pyDatabase:
         report.write(fields)
         while i < 10:
             recordStr = self.f2.readline()
-            if (recordStr[0:7] != '!!!!!!!'):
+            if (recordStr[0:7] != '       '):
                 report.write(recordStr)
                 i += 1
                 success = True
