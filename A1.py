@@ -256,7 +256,7 @@ class pyDatabase:
         report.write(fields)
         while i < 10:
             recordStr = self.f2.readline()
-            if (recordStr != '\n'):
+            if (recordStr[0:7] != '!!!!!!!'):
                 report.write(recordStr)
                 i += 1
                 success = True
