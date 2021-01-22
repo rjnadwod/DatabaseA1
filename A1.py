@@ -66,6 +66,7 @@ class pyDatabase:
     f2 = None
     numRecords = 0
     recordSize = 162
+    recordFields = ""
 
     # Print menu to the user
     def printMenu(self):
@@ -120,6 +121,7 @@ class pyDatabase:
                 fields = next(csvreader)
                 for field in range(len(fields)):
                     self.f.write(fields[field] + ", ")
+                    self.recordFields = self.recordFields + fields[field]
             
                 # Extracting each data row one by one, adding delimters where necessary
                 for record in csvreader: 
@@ -143,7 +145,7 @@ class pyDatabase:
                     self.f2.write(str1 + "\n")
 
                     # Write a blank record to Parks.data between each record
-                    #self.f2.write(blank + "\n")
+                    self.f2.write(blank + "\n")
             
                 # Get total number of records and write to .config
                 print("Total number of records: %d"%(csvreader.line_num))
@@ -195,7 +197,13 @@ class pyDatabase:
 
 
     def displayRecord(self):
-        pass
+        
+        # Check to make sure the file is readable before creating report
+        print("Making sure files are readable.")
+        if (self.f.readable() != True and self.f2.readable() != True):
+            self.f = open(str(self.f.name), "r")
+            self.f2 = open(str(self.f2.name), "r")
+
         # Variable to store a record into from the .data file
         storedRecord = ""
 
@@ -205,9 +213,18 @@ class pyDatabase:
             # Get record ID from user to search with
             recordID = input("Enter record ID to search: ")
 
-            # Cast recordID with int() to make sure it is >= 0
+            # Cast recordID with int() to make sure it is >= 0 and less than numRecords
+        if int(recordID) >= 0 and int(recordID) <= self.numRecords:
             storedRecord = self.find(int(recordID))
-            print(storedRecord)
+            print(self.recordFields[0:2] + ': ' + storedRecord[:7])
+            print(self.recordFields[2:8] + ': ' + storedRecord[8:10])
+            print(self.recordFields[8:13] + ': ' + storedRecord[11:13])
+            print(self.recordFields[13:17] + ': ' + storedRecord[14:18])
+            print(self.recordFields[17:21] + ': ' + storedRecord[19:109])
+            print(self.recordFields[21:25] + ': ' + storedRecord[110:150])
+            print(self.recordFields[25:33] + ': ' + storedRecord[151:160])
+        else:
+            print(recordID + " is out of bounds.")
 
 
 
@@ -266,6 +283,7 @@ class pyDatabase:
 
     # Function to use seeks to find the record
     def find(self, ID):
+
         recordID = ID
         if int(recordID) >= 0:
                 print("Searching for " + str(recordID))
