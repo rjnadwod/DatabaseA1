@@ -146,14 +146,14 @@ class pyDatabase:
                     self.f2.write(str1 + "\n")
 
                     # Write a blank record to Parks.data between each record
-                    self.f2.write(blank + "\n")
+                    #self.f2.write(blank + "\n")
             
                 # Get total number of records and write to .config
                 print("Total number of records: %d"%(csvreader.line_num))
                 print("")
                 self.f.write("\n")
-                self.f.write("Total no. of records: %d"%(csvreader.line_num * 2))
-                self.numRecords = csvreader.line_num * 2 - 1
+                self.f.write("Total no. of records: %d"%(csvreader.line_num))
+                self.numRecords = csvreader.line_num
 
 
 
@@ -215,18 +215,22 @@ class pyDatabase:
             recordID = input("Enter record ID to search: ")
 
             # Cast recordID with int() to make sure it is >= 0 and less than numRecords
-        if int(recordID) >= 0 and int(recordID) <= self.numRecords:
-            storedRecord = self.find(int(recordID))
+        if int(recordID) >= 0:
+            storedRecord, middle = self.binarySearch(recordID)
 
-            # Print record with field names; remove delimiters from the record.
-            # A blank record will print with blanks in every field
-            print(self.recordFields[0:2] + ': ' + storedRecord[:7].strip(' '))
-            print(self.recordFields[2:8] + ': ' + storedRecord[8:10].strip(' '))
-            print(self.recordFields[8:13] + ': ' + storedRecord[11:13].strip(' '))
-            print(self.recordFields[13:17] + ': ' + storedRecord[14:18].strip(' '))
-            print(self.recordFields[17:21] + ': ' + storedRecord[19:109].strip(' '))
-            print(self.recordFields[21:25] + ': ' + storedRecord[110:150].strip(' '))
-            print(self.recordFields[25:33] + ': ' + storedRecord[151:160].strip(' '))
+            if storedRecord != -1:
+                # Print record with field names; remove delimiters from the record.
+                # A blank record will print with blanks in every field
+                print("ID ",recordID,"found at Record",middle)
+                print(self.recordFields[0:2] + ': ' + storedRecord[:7].strip(' '))
+                print(self.recordFields[2:8] + ': ' + storedRecord[8:10].strip(' '))
+                print(self.recordFields[8:13] + ': ' + storedRecord[11:13].strip(' '))
+                print(self.recordFields[13:17] + ': ' + storedRecord[14:18].strip(' '))
+                print(self.recordFields[17:21] + ': ' + storedRecord[19:109].strip(' '))
+                print(self.recordFields[21:25] + ': ' + storedRecord[110:150].strip(' '))
+                print(self.recordFields[25:33] + ': ' + storedRecord[151:160].strip(' '))
+            else:
+                print("ID",recordID,"not found in our records\n")
         else:
             print(recordID + " is out of bounds.")
 
@@ -249,37 +253,42 @@ class pyDatabase:
             recordID = input("Enter record ID to update: ")
             print("")
 
-            # Cast recordID with int() to make sure it is >= 0 and less than numRecords
-        if int(recordID) >= 0 and int(recordID) <= self.numRecords:
-            storedRecord = self.find(int(recordID))
+            # Cast recordID with int() to make sure it is >= 0
+        if int(recordID) >= 0:
+            storedRecord, middle = self.binarySearch(recordID)
 
-            # Print record with field names; remove delimiters from the record.
-            # A blank record will print with blanks in every field
-            print(self.recordFields[0:2] + ': ' + storedRecord[:7].strip(' '))
-            print(self.recordFields[2:8] + ': ' + storedRecord[8:10].strip(' '))
-            print(self.recordFields[8:13] + ': ' + storedRecord[11:13].strip(' '))
-            print(self.recordFields[13:17] + ': ' + storedRecord[14:18].strip(' '))
-            print(self.recordFields[17:21] + ': ' + storedRecord[19:109].strip(' '))
-            print(self.recordFields[21:25] + ': ' + storedRecord[110:150].strip(' '))
-            print(self.recordFields[25:33] + ': ' + storedRecord[151:160].strip(' '))
-            print("")
+            if storedRecord != -1:
+                # Print record with field names; remove delimiters from the record.
+                # A blank record will print with blanks in every field
+                print("ID ",recordID,"found at Record",middle)
+                print(self.recordFields[0:2] + ': ' + storedRecord[:7])
+                print(self.recordFields[2:8] + ': ' + storedRecord[8:10])
+                print(self.recordFields[8:13] + ': ' + storedRecord[11:13])
+                print(self.recordFields[13:17] + ': ' + storedRecord[14:18])
+                print(self.recordFields[17:21] + ': ' + storedRecord[19:109])
+                print(self.recordFields[21:25] + ': ' + storedRecord[110:150])
+                print(self.recordFields[25:33] + ': ' + storedRecord[151:160])
+                print("")
 
-            fieldToUpdate = input("Select field to update: ")
+                fieldToUpdate = input("Select field to update: ")
 
-            if fieldToUpdate == "ID":
-                print("Field 'ID' cannot be changed. Returning to main menu.")
-            elif fieldToUpdate == "Region":
-                print("Updating Region")
-            elif fieldToUpdate == "State":
-                print("Updating State")
-            elif fieldToUpdate == "Code":
-                print("Updating Code")
-            elif fieldToUpdate == "Name":
-                print("Updating Name")
-            elif fieldToUpdate == "Type":
-                print("Updating Type")
-            elif fieldToUpdate == "Visitors":
-                print("Updating Visitors")
+                if fieldToUpdate == "ID":
+                    print("Field 'ID' cannot be changed. Returning to main menu.")
+                elif fieldToUpdate == "Region":
+                    print("Updating Region")
+                elif fieldToUpdate == "State":
+                    print("Updating State")
+                elif fieldToUpdate == "Code":
+                    print("Updating Code")
+                elif fieldToUpdate == "Name":
+                    print("Updating Name")
+                elif fieldToUpdate == "Type":
+                    print("Updating Type")
+                elif fieldToUpdate == "Visitors":
+                    print("Updating Visitors")
+
+            else:
+                print(recordID + " is out of bounds.")
             
         else:
             print(recordID + " is out of bounds.")
@@ -306,6 +315,8 @@ class pyDatabase:
         report.write(fields)
         while i < 10:
             recordStr = self.f2.readline()
+            # Write the record to the report if it is not blank
+            # Increment i by 1 as the operation is successful
             if (recordStr[0:7] != '       '):
                 report.write(recordStr)
                 i += 1
@@ -351,42 +362,44 @@ class pyDatabase:
     # Function to use seeks to find the record
     def find(self, ID):
 
-        recordID = ID
-        if int(recordID) >= 0:
-                print("Searching for " + str(recordID))
-                self.f2.seek(0, 0)
-                self.f2.seek(self.recordSize * int(recordID)) # Offset from the beginning of the file
-                storedRecord = self.f2.readline()
-                return storedRecord
+        storedRecord = ""
+        Success = False
+
+        if ID >= 0 and ID < self.numRecords:
+            print("Searching for " + ID)
+            self.f2.seek(0, 0)
+            self.f2.seek(self.recordSize * ID) # Offset from the beginning of the file
+            storedRecord = self.f2.readline()
+            Success = True
+            
+        return storedRecord, Success
 
 
 
-    # # Binary Search by record ID
-    # def binarySearch(self, f, name):
-    #     global middle
-    #     global num_records,record_size
-    #     low=0
-    #     high=num_records-1
-    #     Found = False
-    #     Success = False
+    # Binary Search by record ID
+    def binarySearch(self, ID):
+        global middle
+        low = 0
+        high = self.numRecords - 1
+        Found = False
+        Success = False
 
-    #     while not Found and high >= low:
-    #         middle = (low+high) // 2
-    #         #middle = low + (high-low) // 2
-    #         record, Success = getRecord(f, middle)
-    #         middleid = record.split()
-    #         middleidnum = middleid[0]
-    #         if middleidnum == name:
-    #             Found = True
-    #         if middleidnum < name:
-    #             low = middle+1
-    #         if middleidnum > name: 
-    #             high = middle-1
+        while not Found and high >= low:
+            middle = (low+high) // 2
+            record, Success = self.find(middle)
+            middleid = record[:7]
+            middleidnum = middleid.strip(' ')
+            if middleidnum == ID:
+                Found = True
+            if middleidnum < ID:
+                low = middle+1
+            if middleidnum > ID: 
+                high = middle-1
         
-    #     if(Found == True):
-    #         return record, middle # the record number of the record
-    #     else:
-    #         return -1, middle
+        if(Found == True):
+            return record, middle
+        else:
+            return -1, middle
 
 
 
