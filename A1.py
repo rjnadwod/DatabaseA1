@@ -146,7 +146,7 @@ class pyDatabase:
                     self.f2.write(str1 + "\n")
 
                     # Write a blank record to Parks.data between each record
-                    #self.f2.write(blank + "\n")
+                    self.f2.write(blank + "\n")
             
                 # Get total number of records and write to .config
                 print("Total number of records: %d"%(csvreader.line_num))
@@ -389,14 +389,19 @@ class pyDatabase:
             record, Success = self.find(middle)
             middleid = record[:7]
             middleidnum = middleid.strip(' ')
-            print("id is " + ID)
             print("middleidnum is " + middleidnum)
+
+            if middleidnum == '':
+                record, Success = self.find(middle-1)
+                middleid = record[:7]
+                middleidnum = middleid.strip(' ')
+
             if middleidnum == ID:
                 Found = True
             elif int(middleidnum) < int(ID):
-                low = middle+1
+                low = middle+2
             elif int(middleidnum) > int(ID): 
-                high = middle-1
+                high = middle-2
         
         if(Found == True):
             return record, middle
