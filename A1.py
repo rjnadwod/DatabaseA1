@@ -366,7 +366,7 @@ class pyDatabase:
         Success = False
 
         if ID >= 0 and ID < self.numRecords:
-            print("Searching for " + ID)
+            print("Searching for " + str(ID))
             self.f2.seek(0, 0)
             self.f2.seek(self.recordSize * ID) # Offset from the beginning of the file
             storedRecord = self.f2.readline()
@@ -389,11 +389,13 @@ class pyDatabase:
             record, Success = self.find(middle)
             middleid = record[:7]
             middleidnum = middleid.strip(' ')
+            print("id is " + ID)
+            print("middleidnum is " + middleidnum)
             if middleidnum == ID:
                 Found = True
-            if middleidnum < ID:
+            elif int(middleidnum) < int(ID):
                 low = middle+1
-            if middleidnum > ID: 
+            elif int(middleidnum) > int(ID): 
                 high = middle-1
         
         if(Found == True):
