@@ -86,7 +86,8 @@ class pyDatabase:
     # User can create a new database
     def createDB(self):
         # Prompt user for the name of a .csv file. Return name to user
-        fileName = input("Name of your file (including .csv): ")
+        fileName = input("Name of your file: ")
+        fileName = fileName + ".csv"
         print("File selected: " + fileName)
 
         # Check for the file; if it is not found, exit the program
@@ -323,7 +324,21 @@ class pyDatabase:
 
 
     def deleteRecord(self):
-        pass
+        if (self.f.closed == True and self.f2.closed == True):
+            print("No database files open. Please open files before searching for a record.\n")
+
+        else:
+            # Find ID which user wants to delete
+            storeID = input("Enter record ID to delete: ")
+
+            # Cast recordID with int() to make sure it is >= 0
+            location = self.f2.find(int(storeID))
+
+            # Find Location to be deleted
+            # self.seek(location[, ])
+
+            # Override line and make blank
+            #self.f2.write("")
 
 
 
