@@ -72,7 +72,7 @@ class pyDatabase:
     def printMenu(self):
         print("""Please select a menu option from the following: 
         1. Create a new database
-        2. Open database
+        2. Open database (Must create a database first)
         3. Close database
         4. Display record
         5. Update record
