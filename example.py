@@ -137,7 +137,7 @@ def binarySearch(f, name):
 	global middle
 	global num_records,record_size
 	low=0
-	high=num_records-1
+	high= num_records-1
 	Found = False
 	Success = False
 
