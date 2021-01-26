@@ -151,12 +151,11 @@ class pyDatabase:
                 # Get total number of records and write to .config
                 print("Parks.config and Parks.data created. Name of database is 'Parks'")
                 print("Total number of records: %d"%(csvreader.line_num))
-                print("")
                 self.f.write("\n")
                 self.f.write("Total no. of records: %d"%(csvreader.line_num))
                 self.numRecords = csvreader.line_num
 
-            print("Closing database.")
+            print("Closing database.\n")
             self.f.close()
             self.f2.close()
 
@@ -206,12 +205,6 @@ class pyDatabase:
 
 
     def displayRecord(self):
-        
-        # Check to make sure the file is readable before creating report
-        # print("Making sure files are readable.")
-        # if (self.f.readable() != True and self.f2.readable() != True):
-        #     self.f = open(str(self.f.name), "r+")
-        #     self.f2 = open(str(self.f2.name), "r+")
 
         # Variable to store a record into from the .data file
         storedRecord = ""
@@ -238,6 +231,7 @@ class pyDatabase:
                 print(self.recordFields[17:21] + ': ' + storedRecord[19:109].strip(' '))
                 print(self.recordFields[21:25] + ': ' + storedRecord[110:150].strip(' '))
                 print(self.recordFields[25:33] + ': ' + storedRecord[151:160].strip(' '))
+                print("")
             else:
                 print("ID",recordID,"not found in our records\n")
         else:
@@ -246,12 +240,6 @@ class pyDatabase:
 
 
     def updateRecord(self):
-        # Check to make sure the file is readable before creating report
-        # print("Making sure files are readable and writable.")
-        # if (self.f.writable != True and self.f2.writable() != True):
-        #     self.f = open(str(self.f.name), "r+")
-        #     self.f2 = open(str(self.f2.name), "r+")
-        #     print("Files are read/write ready.")
 
         # Variable to store a record into from the .data file
         storedRecord = ""
@@ -268,20 +256,20 @@ class pyDatabase:
         if int(recordID) >= 0:
             storedRecord, middle = self.binarySearch(recordID)
 
+            record = [storedRecord[:7], storedRecord[8:10], storedRecord[11:13], storedRecord[14:18], storedRecord[19:109], storedRecord[110:150], storedRecord[151:160]]
+
             if storedRecord != -1:
                 # Print record with field names; remove delimiters from the record.
                 # A blank record will print with blanks in every field
                 print("ID ",recordID,"found at Record",middle)
-                print(self.recordFields[0:2] + ': ' + storedRecord[:7])
-                print(self.recordFields[2:8] + ': ' + storedRecord[8:10])
-                print(self.recordFields[8:13] + ': ' + storedRecord[11:13])
-                print(self.recordFields[13:17] + ': ' + storedRecord[14:18])
-                print(self.recordFields[17:21] + ': ' + storedRecord[19:109])
-                print(self.recordFields[21:25] + ': ' + storedRecord[110:150])
-                print(self.recordFields[25:33] + ': ' + storedRecord[151:160])
+                print(self.recordFields[0:2] + ': ' + record[0])
+                print(self.recordFields[2:8] + ': ' + record[1])
+                print(self.recordFields[8:13] + ': ' + record[2])
+                print(self.recordFields[13:17] + ': ' + record[3])
+                print(self.recordFields[17:21] + ': ' + record[4])
+                print(self.recordFields[21:25] + ': ' + record[5])
+                print(self.recordFields[25:33] + ': ' + record[6])
                 print("")
-
-                list1 = [storedRecord[:7], storedRecord[8:10], storedRecord[11:13], storedRecord[14:18], storedRecord[19:109], storedRecord[110:150], storedRecord[151:160]]
 
                 fieldToUpdate = input("Select field to update: ")
 
@@ -289,33 +277,37 @@ class pyDatabase:
                     print("Field 'ID' cannot be changed. Returning to main menu.")
                 elif fieldToUpdate == "Region":
                     newRegion = input("Enter region: ")
-                    list1[1] = newRegion
+                    record[1] = newRegion
                 elif fieldToUpdate == "State":
                     newState = input("Enter state: ")
-                    list1[2] = newState
+                    record[2] = newState
                 elif fieldToUpdate == "Code":
                     newCode = input("Enter code: ")
-                    list1[3] = newCode
+                    record[3] = newCode
                 elif fieldToUpdate == "Name":
                     newName = input("Enter name: ")
                     if len(newName) < 90:
                         newName = newName.ljust(90, ' ')
-                    list1[4] = newName
+                    record[4] = newName
                 elif fieldToUpdate == "Type":
                     newType = input("Enter type: ")
                     if len(newType) < 40:
                         newType = newType.ljust(40, ' ')
-                    list1[5] = newType
+                    record[5] = newType
                 elif fieldToUpdate == "Visitors":
                     newVisitors = input("Enter visitors: ")
                     if len(newVisitors) < 10:
                         newVisitors = newVisitors.ljust(10, ' ')
-                    list1[6] = newVisitors[:10]
+                    record[6] = newVisitors[:10]
 
-                str1 = ' '.join(list1)
-                print(str1)
-
+                str1 = ' '.join(record)
+                self.f2.seek(0,0)
+                self.f2.seek(self.recordSize * middle)
                 self.f2.write(str1)
+
+                print("Record updated. Closing database files.")
+                self.f.close()
+                self.f2.close()
 
             else:
                 print(recordID + " is out of bounds.")
@@ -365,6 +357,7 @@ class pyDatabase:
 
 
     def deleteRecord(self):
+
         if (self.f.closed == True and self.f2.closed == True):
             print("No database files open. Please open files before searching for a record.\n")
 
@@ -422,7 +415,6 @@ class pyDatabase:
         Success = False
 
         if ID >= 0 and ID < self.numRecords:
-            print("Searching for " + str(ID))
             self.f2.seek(0, 0)
             self.f2.seek(self.recordSize * ID) # Offset from the beginning of the file
             storedRecord = self.f2.readline()
@@ -445,7 +437,6 @@ class pyDatabase:
             record, Success = self.find(middle)
             middleid = record[:7]
             middleidnum = middleid.strip(' ')
-            print("middleidnum is " + middleidnum)
 
             if middleidnum == '':
                 record, Success = self.find(middle-1)
