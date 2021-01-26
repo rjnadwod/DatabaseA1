@@ -100,10 +100,10 @@ class pyDatabase:
             print(fileName, "found. Creating database.")
 
             # Create new .config file to store info about the database
-            self.f = open("Parks.config", "w")
+            self.f = open("Parks.config", "r+")
 
             # Create new .data file to store data in
-            self.f2 = open("Parks.data", "w")
+            self.f2 = open("Parks.data", "r+")
 
             # Create list to hold the field names in
             fields = []
@@ -149,11 +149,16 @@ class pyDatabase:
                     self.f2.write(blank + "\n")
             
                 # Get total number of records and write to .config
+                print("Parks.config and Parks.data created. Name of database is 'Parks'")
                 print("Total number of records: %d"%(csvreader.line_num))
                 print("")
                 self.f.write("\n")
                 self.f.write("Total no. of records: %d"%(csvreader.line_num))
                 self.numRecords = csvreader.line_num
+
+            print("Closing database.")
+            self.f.close()
+            self.f2.close()
 
 
 
@@ -172,13 +177,14 @@ class pyDatabase:
                 # If file is found, let user know and open database 
                 print(dbName, "database found. Opening database.")
                 self.f = open("Parks.config", "r")
-                self.f2 = open("Parks.data", "r")
+                self.f2 = open("Parks.data", "r+")
                 print(str(self.f.name) + " and " + str(self.f2.name) + " have been opened.\n")
 
         # If there is a database currently open, prompt user to close them and try again
         else:
             print("There are database files currently open. Please close them and try again.")
             print("Returning to main menu.\n")
+            return
 
 
 
@@ -190,26 +196,29 @@ class pyDatabase:
             self.f.close()
             self.f2.close()
             print("Files have been closed. Returning to main menu.\n")
+            return
 
         # If there is no database currently open, let the user know
         else:
             print("All database files are currently closed.\n")
+            return
 
 
 
     def displayRecord(self):
         
         # Check to make sure the file is readable before creating report
-        print("Making sure files are readable.")
-        if (self.f.readable() != True and self.f2.readable() != True):
-            self.f = open(str(self.f.name), "r")
-            self.f2 = open(str(self.f2.name), "r")
+        # print("Making sure files are readable.")
+        # if (self.f.readable() != True and self.f2.readable() != True):
+        #     self.f = open(str(self.f.name), "r+")
+        #     self.f2 = open(str(self.f2.name), "r+")
 
         # Variable to store a record into from the .data file
         storedRecord = ""
 
         if (self.f.closed == True and self.f2.closed == True):
             print("No database files open. Please open files before searching for a record.\n")
+            return
         else:
             # Get record ID from user to search with
             recordID = input("Enter record ID to search: ")
@@ -238,16 +247,18 @@ class pyDatabase:
 
     def updateRecord(self):
         # Check to make sure the file is readable before creating report
-        print("Making sure files are readable.")
-        if (self.f.readable() != True and self.f2.readable() != True):
-            self.f = open(str(self.f.name), "w+")
-            self.f2 = open(str(self.f2.name), "w+")
+        # print("Making sure files are readable and writable.")
+        # if (self.f.writable != True and self.f2.writable() != True):
+        #     self.f = open(str(self.f.name), "r+")
+        #     self.f2 = open(str(self.f2.name), "r+")
+        #     print("Files are read/write ready.")
 
         # Variable to store a record into from the .data file
         storedRecord = ""
 
         if (self.f.closed == True and self.f2.closed == True):
             print("No database files open. Please open files before searching for a record.\n")
+            return
         else:
             # Get record ID from user to search with
             recordID = input("Enter record ID to update: ")
@@ -270,22 +281,41 @@ class pyDatabase:
                 print(self.recordFields[25:33] + ': ' + storedRecord[151:160])
                 print("")
 
+                list1 = [storedRecord[:7], storedRecord[8:10], storedRecord[11:13], storedRecord[14:18], storedRecord[19:109], storedRecord[110:150], storedRecord[151:160]]
+
                 fieldToUpdate = input("Select field to update: ")
 
                 if fieldToUpdate == "ID":
                     print("Field 'ID' cannot be changed. Returning to main menu.")
                 elif fieldToUpdate == "Region":
-                    print("Updating Region")
+                    newRegion = input("Enter region: ")
+                    list1[1] = newRegion
                 elif fieldToUpdate == "State":
-                    print("Updating State")
+                    newState = input("Enter state: ")
+                    list1[2] = newState
                 elif fieldToUpdate == "Code":
-                    print("Updating Code")
+                    newCode = input("Enter code: ")
+                    list1[3] = newCode
                 elif fieldToUpdate == "Name":
-                    print("Updating Name")
+                    newName = input("Enter name: ")
+                    if len(newName) < 90:
+                        newName = newName.ljust(90, ' ')
+                    list1[4] = newName
                 elif fieldToUpdate == "Type":
-                    print("Updating Type")
+                    newType = input("Enter type: ")
+                    if len(newType) < 40:
+                        newType = newType.ljust(40, ' ')
+                    list1[5] = newType
                 elif fieldToUpdate == "Visitors":
-                    print("Updating Visitors")
+                    newVisitors = input("Enter visitors: ")
+                    if len(newVisitors) < 10:
+                        newVisitors = newVisitors.ljust(10, ' ')
+                    list1[6] = newVisitors[:10]
+
+                str1 = ' '.join(list1)
+                print(str1)
+
+                self.f2.write(str1)
 
             else:
                 print(recordID + " is out of bounds.")
@@ -301,9 +331,9 @@ class pyDatabase:
 
         # Check to make sure the file is readable before creating report
         print("Making sure files are readable.")
-        if (self.f.readable() != True and self.f2.readable() != True):
-            self.f = open(str(self.f.name), "r")
-            self.f2 = open(str(self.f2.name), "r")
+        if (self.f.closed == True and self.f2.closed == True):
+            print("Please open database before creating report.\n")
+            return
 
         # Create and open file to write the first 10 records to as a "report"
         print("Creating report.txt.")
