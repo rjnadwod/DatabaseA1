@@ -301,11 +301,10 @@ class pyDatabase:
                     record[6] = newVisitors[:10]
 
                 str1 = ' '.join(record)
-                self.f2.seek(0,0)
-                self.f2.seek(self.recordSize * middle)
+                self.findRecord(middle)
                 self.f2.write(str1)
 
-                print("Record updated. Closing database files.")
+                print("Record updated. Closing database files.\n")
                 self.f.close()
                 self.f2.close()
 
@@ -415,8 +414,7 @@ class pyDatabase:
         Success = False
 
         if ID >= 0 and ID < self.numRecords:
-            self.f2.seek(0, 0)
-            self.f2.seek(self.recordSize * ID) # Offset from the beginning of the file
+            self.findRecord(ID) # Offset from the beginning of the file
             storedRecord = self.f2.readline()
             Success = True
             
@@ -454,6 +452,10 @@ class pyDatabase:
             return record, middle
         else:
             return -1, middle
+
+    def findRecord(self, id):
+        self.f2.seek(0,0)
+        self.f2.seek(self.recordSize * id)
 
 
 
