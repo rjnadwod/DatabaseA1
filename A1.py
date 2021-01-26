@@ -373,13 +373,39 @@ class pyDatabase:
             storeID = input("Enter record ID to delete: ")
 
             # Cast recordID with int() to make sure it is >= 0
-            location = self.f2.find(int(storeID))
+            location = (int(storeID))
 
-            # Find Location to be deleted
-            # self.seek(location[, ])
+            #Store in memory as a list
+            store = list()
+
+            #Read and Remove
+            with open("Parks.csv",'r') as readData:
+                read = csv.reader(readData)
+                for row in read:
+                    store.append(row)
+                    for lines in row:
+                        if lines == location:
+                            lines.remove(row)
+
+            #Re-write without column
+            with open("Parks.csv", 'w') as writeData:
+                write = csv.writer(writeData)
+                write.writerows(lines)
+
+
+            # Search for ID Location
+            # Re-Write File
+           # with open(self.f2, "w") as f:
+
+                #for line in row:
+
+                    #What to delete
+                    #f line.strip("\n") !=  location :
+                        #f.write(line)
 
             # Override line and make blank
             #self.f2.write("")
+        exit()
 
 
 
