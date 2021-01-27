@@ -68,6 +68,10 @@ class pyDatabase:
     recordSize = 162
     recordFields = ""
 
+    # Blank record with no delimiters
+    # Delimiter used will be ' '
+    blank = "                                                                                                                                                                 "
+
     # Print menu to the user
     def printMenu(self):
         print("""Please select a menu option from the following: 
@@ -107,10 +111,6 @@ class pyDatabase:
 
             # Create list to hold the field names in
             fields = []
-
-            # Blank record with no delimiters
-            # Delimiter used will be ' '
-            blank = "                                                                                                                                                                 "
             
             # Reading csv file 
             with open(fileName, 'r') as csvfile: 
@@ -146,7 +146,7 @@ class pyDatabase:
                     self.f2.write(str1 + "\n")
 
                     # Write a blank record to Parks.data between each record
-                    self.f2.write(blank + "\n")
+                    self.f2.write(self.blank + "\n")
             
                 # Get total number of records and write to .config
                 print("Parks.config and Parks.data created. Name of database is 'Parks'")
@@ -275,6 +275,7 @@ class pyDatabase:
 
                 if fieldToUpdate == "ID":
                     print("Field 'ID' cannot be changed. Returning to main menu.")
+                    return
                 elif fieldToUpdate == "Region":
                     newRegion = input("Enter region: ")
                     record[1] = newRegion
@@ -298,7 +299,7 @@ class pyDatabase:
                     newVisitors = input("Enter visitors: ")
                     if len(newVisitors) < 10:
                         newVisitors = newVisitors.ljust(10, ' ')
-                    record[6] = newVisitors[:10]
+                    record[6] = newVisitors[:9]
 
                 str1 = ' '.join(record)
                 self.findRecord(middle)
@@ -351,7 +352,35 @@ class pyDatabase:
 
 
     def addRecord(self):
-        pass
+        # Check to make sure the file is readable before creating report
+        print("Making sure files are writable.")
+        if (self.f.closed == True and self.f2.closed == True):
+            print("Please open database before creating report.\n")
+            return
+
+        # Ask for user inputs for fields
+        newID = input("New Record's ID: ").ljust(7, ' ')
+        newRegion = input("New Record's Region: ")
+        newState = input("New Record's State: ")
+        newCode = input("New Record's Code: ")
+        newName = input("New Record's Name: ").ljust(90, ' ')
+        newType = input("New Record's Type: ").ljust(40, ' ')
+        newVisitors = input("New Record's Visitors: ").ljust(10, ' ')
+
+        newRec = [newID, newRegion, newState, newCode, newName, newType, newVisitors]
+        rec = ' '.join(newRec)
+ 
+        tmpRec, idx = self.binarySearch(newID)
+
+        if tmpRec == self.blank:
+            print("writing")
+            self.f2.seek(0,0)
+            self.f2.seek(self.recordSize * idx)
+            self.f2.write(rec)
+
+        print("Closing database.")
+        self.f.close()
+        self.f2.close()
 
 
 
@@ -359,45 +388,9 @@ class pyDatabase:
 
         if (self.f.closed == True and self.f2.closed == True):
             print("No database files open. Please open files before searching for a record.\n")
-
-        else:
-            # Find ID which user wants to delete
-            storeID = input("Enter record ID to delete: ")
-
-            # Cast recordID with int() to make sure it is >= 0
-            location = (int(storeID))
-
-            #Store in memory as a list
-            store = list()
-
-            #Read and Remove
-            with open("Parks.csv",'r') as readData:
-                read = csv.reader(readData)
-                for row in read:
-                    store.append(row)
-                    for lines in row:
-                        if lines == location:
-                            lines.remove(row)
-
-            #Re-write without column
-            with open("Parks.csv", 'w') as writeData:
-                write = csv.writer(writeData)
-                write.writerows(lines)
-
-
-            # Search for ID Location
-            # Re-Write File
-           # with open(self.f2, "w") as f:
-
-                #for line in row:
-
-                    #What to delete
-                    #f line.strip("\n") !=  location :
-                        #f.write(line)
-
-            # Override line and make blank
-            #self.f2.write("")
-        exit()
+            return
+        
+        return
 
 
 
@@ -444,14 +437,16 @@ class pyDatabase:
             if middleidnum == ID:
                 Found = True
             elif int(middleidnum) < int(ID):
-                low = middle+2
+                low = middle+1
             elif int(middleidnum) > int(ID): 
-                high = middle-2
+                high = middle-1
         
         if(Found == True):
             return record, middle
         else:
-            return -1, middle
+            return self.blank, middle
+
+
 
     def findRecord(self, id):
         self.f2.seek(0,0)
