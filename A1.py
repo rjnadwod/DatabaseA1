@@ -427,8 +427,6 @@ class pyDatabase:
         # Find ID Line to be deleted
 
         tempRec, index = self.binarySearch(delID)
-        print(tempRec)
-        print(index)
 
         # Delete Line
         print("Deleting Line")
@@ -469,7 +467,6 @@ class pyDatabase:
         if ID >= 0 and ID < self.numRecords:
             self.findRecord(ID)  # Offset from the beginning of the file
             storedRecord = self.f2.readline()
-            print("Stored record is " + storedRecord)
             Success = True
 
         return storedRecord, Success
@@ -487,8 +484,6 @@ class pyDatabase:
             record, Success = self.find(middle)
             middleid = record[:7]
             middleidnum = middleid.strip(' ')
-            print("Middleid is " + middleidnum)
-            print("Record is " + record)
 
             if middleidnum == '':
                 record, Success = self.find(middle + 1)
