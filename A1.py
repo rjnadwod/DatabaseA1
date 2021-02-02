@@ -321,6 +321,7 @@ class pyDatabase:
         # Create and open file to write the first 10 records to as a "report"
         print("Creating report.txt.")
         report = open("report.txt", "w")
+        self.f2.seek(0,0)
 
         i = 0
         fields = self.f.readline()
@@ -382,12 +383,29 @@ class pyDatabase:
             self.f2.seek(0, 0)
             self.f2.truncate(0)
             os.rename("temp.data", "Parks.data")
-            self.numRecords += 2
+            self.numRecords += 1
+            self.f2.close()
 
-            tmpRec, idx = self.binarySearch(newID)
+            self.f2 = open("Parks.data", "r+")
+            tmpRec2, idx2 = self.binarySearch(newID)
             self.f2.seek(0,0)
-            self.f2.seek(self.recordSize * idx)
+            self.f2.seek(self.recordSize * idx2)
             self.f2.write(rec)
+
+            print("Reformatting")
+            tmpFile = open("temp.data", "w")
+            self.f2.seek(0,0)
+
+            for line in self.f2:
+                if (line != self.blank):
+                    tmpFile.write(line)
+                    tmpFile.write(self.blank)
+
+            self.f2.seek(0, 0)
+            self.f2.truncate(0)
+            os.rename("temp.data", "Parks.data")
+            self.numRecords += 1
+            self.f2.close()
 
             print("Database reformatted. Please select '7' again to insert your desired record.")
 
@@ -418,13 +436,28 @@ class pyDatabase:
         self.f2.seek(self.recordSize * (index+1))
         self.f2.write(blank)
 
+        print("Reformatting")
+        tmpFile = open("temp.data", "w")
+        self.f2.seek(0,0)
+
+        for line in self.f2:
+            if (line != self.blank):
+                tmpFile.write(line)
+                tmpFile.write(self.blank)
+
+        self.f2.seek(0, 0)
+        self.f2.truncate(0)
+        os.rename("temp.data", "Parks.data")
+        self.numRecords -= 1
+        self.f2.close()
+
         print("Closing database.")
         self.f.close()
         self.f2.close()
         return
 
     def quit(self):
-        print("Goodbye! :)")
+        print("Thank you for using this! Hope you had fun :)")
         exit()
 
     # Function to use seeks to find the record
@@ -436,6 +469,7 @@ class pyDatabase:
         if ID >= 0 and ID < self.numRecords:
             self.findRecord(ID)  # Offset from the beginning of the file
             storedRecord = self.f2.readline()
+            print("Stored record is " + storedRecord)
             Success = True
 
         return storedRecord, Success
@@ -453,8 +487,8 @@ class pyDatabase:
             record, Success = self.find(middle)
             middleid = record[:7]
             middleidnum = middleid.strip(' ')
-            # print("Middleid is " + middleidnum)
-            # print("Record is " + record)
+            print("Middleid is " + middleidnum)
+            print("Record is " + record)
 
             if middleidnum == '':
                 record, Success = self.find(middle + 1)
