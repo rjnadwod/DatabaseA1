@@ -13,6 +13,7 @@ import sys
 import random
 import os.path
 import csv
+import shutil
 
 
 def main():
@@ -70,7 +71,7 @@ class pyDatabase:
 
     # Blank record with no delimiters
     # Delimiter used will be ' '
-    blank = "                                                                                                                                                                 "
+    blank = "                                                                                                                                                                 \n"
 
     # Print menu to the user
     def printMenu(self):
@@ -102,10 +103,10 @@ class pyDatabase:
             print(fileName, "found. Creating database.")
 
             # Create new .config file to store info about the database
-            self.f = open("Parks.config", "r+")
+            self.f = open("Parks.config", "w+")
 
             # Create new .data file to store data in
-            self.f2 = open("Parks.data", "r+")
+            self.f2 = open("Parks.data", "w+")
 
             # Create list to hold the field names in
             fields = []
@@ -144,7 +145,7 @@ class pyDatabase:
                     self.f2.write(str1 + "\n")
 
                     # Write a blank record to Parks.data between each record
-                    self.f2.write(self.blank + "\n")
+                    self.f2.write(self.blank)
 
                 # Get total number of records and write to .config
                 print("Parks.config and Parks.data created. Name of database is 'Parks'")
@@ -209,11 +210,11 @@ class pyDatabase:
             # Get record ID from user to search with
             recordID = input("Enter record ID to search: ")
 
-            # Cast recordID with int() to make sure it is >= 0 and less than numRecords
+        # Cast recordID with int() to make sure it is >= 0 and less than numRecords
         if int(recordID) >= 0:
             storedRecord, middle = self.binarySearch(recordID)
 
-            if storedRecord != self.blank:
+            if storedRecord != -1:
                 # Print record with field names; remove delimiters from the record.
                 # A blank record will print with blanks in every field
                 print("ID ", recordID, "found at Record", middle)
@@ -343,7 +344,7 @@ class pyDatabase:
         # Check to make sure the file is readable before creating report
         print("Making sure files are writable.")
         if (self.f.closed == True and self.f2.closed == True):
-            print("Please open database before creating report.\n")
+            print("Please open database before adding a record.\n")
             return
 
         # Ask for user inputs for fields
@@ -359,25 +360,36 @@ class pyDatabase:
         rec = ' '.join(newRec)
 
         tmpRec, idx = self.binarySearch(newID)
-        print(tmpRec)
-        print(idx)
-        idnum = tmpRec[:7]
+        self.f2.seek(0,0)
+        self.f2.seek(self.recordSize * idx)
+        tmpLine = self.f2.readline()
 
-        if idnum != '       ':
-            print(tmpRec[:7])
+        if tmpLine == self.blank:
             print("writing")
             self.f2.seek(0, 0)
             self.f2.seek(self.recordSize * idx)
             self.f2.write(rec)
-        else:
+        elif tmpLine != self.blank:
             print("Reformatting")
+            tmpFile = open("temp.data", "w")
+            self.f2.seek(0,0)
+
+            for line in self.f2:
+                if (line != self.blank):
+                    tmpFile.write(line)
+                    tmpFile.write(self.blank)
+
             self.f2.seek(0, 0)
+            self.f2.truncate(0)
+            os.rename("temp.data", "Parks.data")
+            self.numRecords += 2
+
+            tmpRec, idx = self.binarySearch(newID)
+            self.f2.seek(0,0)
             self.f2.seek(self.recordSize * idx)
-            current = self.f2.readline()
-            self.f2.write(current + "\n")
-            self.f2.write(self.blank + "\n")
-            self.f2.write(rec + "\n")
-            self.f2.write(self.blank + "\n")
+            self.f2.write(rec)
+
+            print("Database reformatted. Please select '7' again to insert your desired record.")
 
         print("Closing database.")
         self.f.close()
@@ -441,15 +453,15 @@ class pyDatabase:
             record, Success = self.find(middle)
             middleid = record[:7]
             middleidnum = middleid.strip(' ')
-            print("Middleid is " + middleidnum)
+            # print("Middleid is " + middleidnum)
+            # print("Record is " + record)
 
             if middleidnum == '':
-                print("middled is blank. searching +1")
                 record, Success = self.find(middle + 1)
                 middleid = record[:7]
                 middleidnum = middleid.strip(' ')
 
-            if middleidnum == ID:
+            if int(middleidnum) == int(ID):
                 Found = True
             elif int(middleidnum) < int(ID):
                 low = middle + 1
@@ -459,7 +471,7 @@ class pyDatabase:
         if (Found == True):
             return record, middle
         else:
-            return self.blank, middle
+            return -1, middle
 
     def findRecord(self, id):
         self.f2.seek(0, 0)
