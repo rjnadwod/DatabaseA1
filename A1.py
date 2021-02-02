@@ -407,8 +407,6 @@ class pyDatabase:
             self.numRecords += 1
             self.f2.close()
 
-            print("Database reformatted. Please select '7' again to insert your desired record.")
-
         print("Closing database.")
         self.f.close()
         self.f2.close()
